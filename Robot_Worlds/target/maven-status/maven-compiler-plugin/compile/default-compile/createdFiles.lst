@@ -1,3 +1,7 @@
-za/co/wethinkcode/Server.class
 za/co/wethinkcode/Client.class
-za/co/wethinkcode/Main.class
+za/co/wethinkcode/Obstacle.class
+za/co/wethinkcode/Server.class
+za/co/wethinkcode/Obstacle$Type.class
+za/co/wethinkcode/ClientHandler.class
+za/co/wethinkcode/World.class
+za/co/wethinkcode/ServerConstants.class
