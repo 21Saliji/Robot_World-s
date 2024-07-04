@@ -1,24 +1,60 @@
 package za.co.wethinkcode;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
     private static final int PORT = 12345;
-    private static final int MAX_DIMENSION = 200;
 
     public static void main(String[] args) {
-        try (BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in))) {
-            int width = getInputDimension(consoleReader, "Enter the width of the world (limit 200): ");
-            int height = getInputDimension(consoleReader, "Enter the height of the world (limit 200): ");
-            System.out.println("Width: " + width + ", Height: " + height);
+        int width = 0, height = 0, visibility = 0, reloadTime = 0, repairTime = 0, mineTime = 0, maxShields = 0, maxShots = 0;
 
-            World world = new World(height, width);
+        // Read configuration from file
+        try (BufferedReader configReader = new BufferedReader(new FileReader("config.txt"))) {
+            String line;
+            while ((line = configReader.readLine()) != null) {
+                String[] parts = line.split("=");
+                if (parts.length == 2) {
+                    switch (parts[0]) {
+                        case "width":
+                            width = Integer.parseInt(parts[1]);
+                            break;
+                        case "height":
+                            height = Integer.parseInt(parts[1]);
+                            break;
+                        case "visibility":
+                            visibility = Integer.parseInt(parts[1]);
+                            break;
+                        case "reload":
+                            reloadTime = Integer.parseInt(parts[1]);
+                            break;
+                        case "repair":
+                            repairTime = Integer.parseInt(parts[1]);
+                            break;
+                        case "mine":
+                            mineTime = Integer.parseInt(parts[1]);
+                            break;
+                        case "max-shields":
+                            maxShields = Integer.parseInt(parts[1]);
+                            break;
+                        case "max-shots":
+                            maxShots = Integer.parseInt(parts[1]);
+                            break;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-            ServerSocket serverSocket = new ServerSocket(PORT);
+        // Create world instance with configuration
+        World world = new World(width, height, visibility, reloadTime, repairTime, mineTime, maxShields, maxShots);
+
+        // Start server
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("Server is running and waiting for client on port " + PORT);
 
             while (true) {
@@ -32,22 +68,6 @@ public class Server {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private static int getInputDimension(BufferedReader reader, String prompt) {
-        while (true) {
-            try {
-                System.out.print(prompt);
-                int dimension = Integer.parseInt(reader.readLine());
-                if (dimension > 0 && dimension <= MAX_DIMENSION) {
-                    return dimension;
-                } else {
-                    System.out.println("Invalid input. Please enter a number between 1 and " + MAX_DIMENSION);
-                }
-            } catch (NumberFormatException | IOException e) {
-                System.out.println("Invalid input. Please enter a valid number.");
-            }
         }
     }
 }

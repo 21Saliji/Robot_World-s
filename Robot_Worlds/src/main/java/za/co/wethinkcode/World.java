@@ -1,104 +1,112 @@
 package za.co.wethinkcode;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static za.co.wethinkcode.Client.objectMapper;
+import java.util.HashMap;
+import java.util.Map;
 
 public class World {
-    private int height;
     private int width;
-    private static List<Robot> robots;
+    private int height;
+    private int visibility;
+    private int reloadTime;
+    private int repairTime;
+    private int mineTime;
+    private int maxShields;
+    private int maxShots;
+    private Map<String, Robot> robots;
 
-    public World(int height, int width) {
-        this.height = height;
+    public World(int width, int height, int visibility, int reloadTime, int repairTime, int mineTime, int maxShields, int maxShots) {
         this.width = width;
-        this.robots = new ArrayList<>();
+        this.height = height;
+        this.visibility = visibility;
+        this.reloadTime = reloadTime;
+        this.repairTime = repairTime;
+        this.mineTime = mineTime;
+        this.maxShields = maxShields;
+        this.maxShots = maxShots;
+        this.robots = new HashMap<>();
     }
 
-    public void addRobot(Robot robot) {
-        robots.add(robot);
+    public synchronized String launchRobot(String robotName, String kind, int maxShields, int maxShots) {
+        // Implement robot launching logic
+        // Return JSON response
+        // Example implementation
+        return "";
     }
 
-    public static List<Robot> getRobots() {
-        return robots;
+    public synchronized String look(String robotName) {
+        // Implement look command logic
+        // Return JSON response
+        // Example implementation
+        return "";
     }
 
-    public static void removeAllRobots() {
-        robots.clear();
+    public synchronized String getRobotState(String robotName) {
+        // Implement get robot state logic
+        // Return JSON response
+        // Example implementation
+        return "";
     }
 
-    public String launch(String robotName, JsonNode argumentsNode) {
-        // Placeholder implementation
-        // Randomly position the robot in an open space (not implemented fully)
-        int x = 0; // Replace with logic to find an open space
-        int y = 0; // Replace with logic to find an open space
-        Robot newRobot = new Robot(robotName, "NORMAL", x, y);
-        robots.add(newRobot);
-        return createResponse("OK", "Launched " + robotName, createState(newRobot));
+    public synchronized String moveRobot(String robotName, String direction, int steps) {
+        // Implement move robot logic
+        // Return JSON response
+        // Example implementation
+        return "";
     }
 
-    public String look(String robotName) {
-        // Placeholder implementation
-        // Implement logic to look around and gather information
-        return createResponse("OK", "Looking around", createState(findRobotByName(robotName)));
+    public synchronized String turnRobot(String robotName, String direction) {
+        // Implement turn robot logic
+        // Return JSON response
+        // Example implementation
+        return "";
     }
 
-    public String quit() {
-        // Disconnect all robots and end the world
-        removeAllRobots();
-        return createResponse("OK", "Disconnected all robots and ended the world.", null);
+    public synchronized String repairRobot(String robotName) {
+        // Implement repair robot logic
+        // Return JSON response
+        // Example implementation
+        return "";
     }
 
-    public String robots() {
-        // List all robots in the world
-        ArrayNode robotsArray = objectMapper.createArrayNode();
-        for (Robot robot : robots) {
-            ObjectNode robotNode = objectMapper.createObjectNode();
-            robotNode.put("name", robot.getName());
-            robotNode.put("state", robot.getState());
-            robotsArray.add(robotNode);
-        }
-        return createResponse("OK", "List of robots", robotsArray);
+    public synchronized String reloadRobot(String robotName) {
+        // Implement reload robot logic
+        // Return JSON response
+        // Example implementation
+        return "";
     }
 
-    public String dump() {
-        // Implement logic to dump the state of the world (not fully implemented)
-        return createResponse("OK", "World state dump", null);
+    public synchronized String mineRobot(String robotName) {
+        // Implement mine robot logic
+        // Return JSON response
+        // Example implementation
+        return "";
     }
 
-    private String createResponse(String result, String message, JsonNode stateNode) {
-        ObjectNode response = objectMapper.createObjectNode();
-        response.put("result", result);
-        response.put("message", message);
-        if (stateNode != null) {
-            response.set("state", stateNode);
-        }
-        return response.toString();
+    public synchronized String fireRobot(String robotName) {
+        // Implement fire robot logic
+        // Return JSON response
+        // Example implementation
+        return "";
     }
 
-    private JsonNode createState(Robot robot) {
-        // Example method to create state information for the robot (not fully implemented)
-        ObjectNode stateNode = objectMapper.createObjectNode();
-        stateNode.put("positionX", robot.getxPosition());
-        stateNode.put("positionY", robot.getyPosition());
-        stateNode.put("direction", "NORTH"); // Placeholder for direction
-        stateNode.put("shields", 100); // Placeholder for shields
-        stateNode.put("shots", 10); // Placeholder for shots
-        stateNode.put("status", robot.getState());
-        return stateNode;
-    }
-
-    private Robot findRobotByName(String robotName) {
-        for (Robot robot : robots) {
-            if (robot.getName().equals(robotName)) {
-                return robot;
-            }
-        }
-        return null;
+    public synchronized String getWorldParameters() {
+        // Return JSON response with world parameters
+        // Example implementation
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode responseNode = objectMapper.createObjectNode();
+        responseNode.put("result", "OK");
+        ObjectNode dataNode = objectMapper.createObjectNode();
+        dataNode.putArray("dimensions").add(width).add(height);
+        dataNode.put("visibility", visibility);
+        dataNode.put("reload", reloadTime);
+        dataNode.put("repair", repairTime);
+        dataNode.put("mine", mineTime);
+        dataNode.put("max-shields", maxShields);
+        dataNode.put("max-shots", maxShots);
+        responseNode.set("data", dataNode);
+        return responseNode.toString();
     }
 }
